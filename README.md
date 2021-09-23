@@ -25,6 +25,7 @@ Properties need to be changed
 NFTs are mostly traded as uneditable ^1
 Data storage on chain is very expensive
 
-## Solution
+## Benefits
 Official documents that can expire
-Licensing of media
+Licensing of media, to enable just ownership at all stages (eg: before and after end of licensing deal)
+properties of a game's nft can change, but the properties themselves cannot be altered
