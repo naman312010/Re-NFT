@@ -19,7 +19,7 @@ Websites
 Official documents
 
 ## Problem
-### Why editable NFT:
+### Why editable NFT
 Properties need to be changed
 
 NFTs are mostly traded as uneditable ^1
@@ -27,3 +27,4 @@ Data storage on chain is very expensive
 
 ## Solution
 Official documents that can expire
+Licensing of media
