@@ -1,7 +1,7 @@
 # Re-NFT
 Redoing how useful NFTs can be. Introducing programmable NFTs. 
 
-## Blockchain term:
+## Blockchain term
 in wallet/in account : you own it
 NFT: Non-Fungible Token
 
@@ -11,19 +11,19 @@ NFT's info permanent when outside blockchain or unreliable when on a centralized
 Data storage on chain is very expensive
 DeFi - Decentralized Finance
 
-## Applications of NFTs:
+## Applications of NFTs
 multimedia creations as assets
 in games (NFTs can have properties)
 Certificate
 Websites
 Official documents
 
-## Problem:
+## Problem
 ### Why editable NFT:
 Properties need to be changed
 
 NFTs are mostly traded as uneditable ^1
 Data storage on chain is very expensive
 
-## Solution:
+## Solution
 Official documents that can expire
