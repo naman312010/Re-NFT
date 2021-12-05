@@ -1,5 +1,5 @@
 import '../styles/globals.css'
-
+import "antd/dist/antd.css";
 import Layout from '../components/layout'
 
 export default function MyApp({ Component, pageProps }) {
