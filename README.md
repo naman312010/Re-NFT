@@ -29,3 +29,14 @@ Data storage on chain is very expensive
 Official documents that can expire
 Licensing of media, to enable just ownership at all stages (eg: before and after end of licensing deal)
 properties of a game's nft can change, but the properties themselves cannot be altered
+
+## Options on "mint page":
+Upload file
+name, description, [exptime], [color]
+mint button
+
+## Browse (default) page:
+display minted NFT
+
+## NFT Page:
+details of NFT
