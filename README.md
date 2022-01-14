@@ -40,3 +40,17 @@ display minted NFT
 
 ## NFT Page:
 details of NFT
+
+## Basic query for all token data:
+query AllTokens {
+  tokens {
+    id
+    uri
+    owner
+    creator
+    contractAddress
+  }
+}
+
+## Query endpoint:
+https://api.thegraph.com/subgraphs/name/naman312010/re-nft-mumbai

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
+var Contract = require('web3-eth-contract');
 import renft from "../artifacts/ReNFT.json";
 import { Form, Input, Button, Radio } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -36,25 +37,29 @@ export default function Mint() {
   }
 
   const handleMintNFT = async (
-    name,
-    image_link,
+    name = "",
+    image_link = "",
     exp_time = 0,
     primary_color = "",
     secondary_color = "",
-    description
+    description = ""
   ) => {
     try {
-      //console.log("Minting using values:" + values.toString());
-      let receipt = await renft.methods
-        .mint(
+      const web3 = window.web3;
+      const accounts = await web3.eth.getAccounts();
+      const account = accounts[0];
+      setCurrentaccount(account);
+      const networkId = await web3.eth.net.getId();
+      const contract = new web3.eth.Contract(renft.abi,renft.networks[networkId].address);
+      //console.log(renft.networks[networkId].address);
+      let receipt = await contract.methods.mint(
           name,
           image_link,
           exp_time,
           primary_color,
           secondary_color,
           description
-        )
-        .send({ from: currentaccount });
+        ).send({ from: currentaccount });
       if (receipt) {
         console.log(receipt);
         loadBlockchaindata();
