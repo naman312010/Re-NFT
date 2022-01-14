@@ -1,8 +1,0 @@
-type Token @entity {
-  id: ID!
-  creator: Bytes #address
-  uri: String #encoded metadata
-  contractAddress: Bytes
-  mintedTime: BigInt #epoch timestamp
-  owner: Bytes #address
-}
