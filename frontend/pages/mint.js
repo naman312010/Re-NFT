@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
-var Contract = require('web3-eth-contract');
+var Contract = require("web3-eth-contract");
 import renft from "../artifacts/ReNFT.json";
 import { Form, Input, Button, Radio } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -36,30 +36,28 @@ export default function Mint() {
     console.log("Current connected account:" + currentaccount);
   }
 
-  const handleMintNFT = async (
-    name = "",
-    image_link = "",
-    exp_time = 0,
-    primary_color = "",
-    secondary_color = "",
-    description = ""
-  ) => {
+  const handleMintNFT = async ({
+    nftName,
+    img,
+    expDate,
+    primaryColor,
+    secondaryColor,
+    description,
+  }) => {
     try {
       const web3 = window.web3;
       const accounts = await web3.eth.getAccounts();
       const account = accounts[0];
       setCurrentaccount(account);
       const networkId = await web3.eth.net.getId();
-      const contract = new web3.eth.Contract(renft.abi,renft.networks[networkId].address);
+      const contract = new web3.eth.Contract(
+        renft.abi,
+        renft.networks[networkId].address
+      );
       //console.log(renft.networks[networkId].address);
-      let receipt = await contract.methods.mint(
-          name,
-          image_link,
-          exp_time,
-          primary_color,
-          secondary_color,
-          description
-        ).send({ from: currentaccount });
+      let receipt = await contract.methods
+        .mint(nftName, img, expDate, primaryColor, secondaryColor, description)
+        .send({ from: currentaccount });
       if (receipt) {
         console.log(receipt);
         loadBlockchaindata();
@@ -71,10 +69,15 @@ export default function Mint() {
   };
 
   const onFinish = (values) => {
-    console.log("Success:", values);
+    for (const key in values) {
+      values[key] = key === "expDate" ? 0 : values[key] ?? "";
+    }
+    // console.log(values);
+    handleMintNFT(values);
   };
 
   const onFinishFailed = (errorInfo) => {
+    alert("An error occured. Please check the console log");
     console.error("Failed:", errorInfo);
   };
 
@@ -87,28 +90,37 @@ export default function Mint() {
         onFinishFailed={onFinishFailed}
       >
         <Form.Item
+          name="nftName"
           label="NFT Name"
           required
+          hasFeedback
           rules={[{ required: true, message: "Please input NFT name!" }]}
         >
           <Input placeholder="Bixby" />
         </Form.Item>
-        <Form.Item label="Expiry Date">
+        <Form.Item name="expDate" label="Expiry Date">
           <Input placeholder="mm-dd-yy" />
         </Form.Item>
-        <Form.Item label="Primary Color">
+        <Form.Item name="primaryColor" label="Primary Color">
           <Input placeholder="#rgb" />
         </Form.Item>
-        <Form.Item label="Secondary Color">
+        <Form.Item name="secondaryColor" label="Secondary Color">
           <Input placeholder="#rgb" />
         </Form.Item>
-        <Form.Item label="Description">
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[{ required: true, messge: "Please tell us about the NFT!!" }]}
+          hasFeedback
+        >
           <Input placeholder="Tell us more!!" />
         </Form.Item>
         <Form.Item
+          name="imgFile"
           label="Upload File"
           required
-          rules={[{ required: true, message: "Please upload file!" }]}
+          rules={[{ required: true, message: "Please upload the image!!" }]}
+          hasFeedback
         >
           <Input
             type="file"
@@ -118,11 +130,7 @@ export default function Mint() {
           />
         </Form.Item>
         <Form.Item>
-          <Button
-            onClick={handleMintNFT}
-            /*onclick=handleMintNFT(args list below)*/ type="primary"
-            htmlType="submit"
-          >
+          <Button type="primary" htmlType="submit">
             Mint NFT
           </Button>
         </Form.Item>
