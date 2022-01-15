@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 var Contract = require("web3-eth-contract");
 import renft from "../artifacts/ReNFT.json";
-import { Form, Input, Button, Radio } from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { Form, Input, Button, DatePicker } from "antd";
 
 // type RequiredMark = boolean | 'optional';
 
@@ -70,10 +69,15 @@ export default function Mint() {
 
   const onFinish = (values) => {
     for (const key in values) {
-      values[key] = key === "expDate" ? 0 : values[key] ?? "";
+      if (!values[key]) {
+        values[key] = key === "expDate" ? 0 : values[key] ?? "";
+      } else if (key === "expDate") {
+        values[key] = Math.floor(values[key] / 1000);
+      }
     }
-    // console.log(values);
-    handleMintNFT(values);
+    console.log(values);
+    form.resetFields();
+    // handleMintNFT(values);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -99,13 +103,13 @@ export default function Mint() {
           <Input placeholder="Bixby" />
         </Form.Item>
         <Form.Item name="expDate" label="Expiry Date">
-          <Input placeholder="mm-dd-yy" />
+          <DatePicker size="default" />
         </Form.Item>
-        <Form.Item name="primaryColor" label="Primary Color">
-          <Input placeholder="#rgb" />
+        <Form.Item name="primaryColor" size="sm" label="Primary Color">
+          <Input type="color" placeholder="Primary Color" />
         </Form.Item>
-        <Form.Item name="secondaryColor" label="Secondary Color">
-          <Input placeholder="#rgb" />
+        <Form.Item name="secondaryColor" size="sm" label="Secondary Color">
+          <Input type="color" placeholder="Secondary Color" />
         </Form.Item>
         <Form.Item
           name="description"
