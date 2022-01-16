@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Avatar, Layout, Menu, Breadcrumb } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
 const { Header, Content, Footer } = Layout;
-import './layout.module.css'
+import "./layout.module.css";
 function SiteLayout({ children }) {
   const router = useRouter();
-  const activeNav = router.pathname == '/mint' ? "2" : "1";
-  const crumb = router.pathname == "/mint" ? "Mint NFT" : "Minted NFT Catalogue";
+  const activeNav = router.pathname == "/mint" ? "2" : "1";
+  const crumb =
+    router.pathname == "/mint" ? "Mint NFT" : "Minted NFT Catalogue";
   return (
     <Layout className="layout">
       <Header>
@@ -21,6 +23,14 @@ function SiteLayout({ children }) {
           <Menu.Item key="2">
             <Link href="/mint">
               <a>{`${"Mint-NFT"}`}</a>
+            </Link>
+          </Menu.Item>
+          <Menu.Item
+            key="3"
+            style={{ position: "absolute", right: "4rem", top: "0" }}
+          >
+            <Link href="/user" passHref>
+              <Avatar size="md" icon={<UserOutlined />} />
             </Link>
           </Menu.Item>
         </Menu>

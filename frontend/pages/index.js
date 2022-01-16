@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Card, Avatar, Row, Col, Spin, Alert } from "antd";
+import React from "react";
+import { Row } from "antd";
 import { useQuery, gql } from "@apollo/client";
-import {
-  EditOutlined,
-  EllipsisOutlined,
-  SettingOutlined,
-  ShoppingOutlined,
-  HeartOutlined,
-} from "@ant-design/icons";
-import { decode as atob, encode as btoa } from "base-64";
+import { decode as atob } from "base-64";
 import NFTCards from "../components/NFTCard";
 import Wrapper from "../components/Wrapper";
 
@@ -30,9 +23,9 @@ export default function Home() {
   const { loading, error, data } = useQuery(All_NFTS);
   console.log("all nft", data);
   if (data) {
-    let uri = data.tokens[0].uri
+    let uri = data.tokens[0].uri;
     // uri.replace("data:application/json;base64,", "");
-    uri = uri.slice(29, uri.length)
+    uri = uri.slice(29, uri.length);
     console.log("original data", JSON.parse(atob(uri)));
     // console.log("utf 8", b64_to_utf8(uri));
   }

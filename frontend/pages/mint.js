@@ -44,19 +44,20 @@ export default function Mint() {
               method: "wallet_addEthereumChain",
               params: [
                 {
-                  chainId: '0x13881',
-                  chainName: 'Mumbai Testnet (Polygon)',
+                  chainId: "0x13881",
+                  chainName: "Mumbai Testnet (Polygon)",
                   nativeCurrency: {
-                    name: 'Matic',
-                    symbol: 'MATIC',
-                    decimals: 18
+                    name: "Matic",
+                    symbol: "MATIC",
+                    decimals: 18,
                   },
-                  rpcUrls: ['https://rpc-mumbai.matic.today',
-                    'https://matic-mumbai.chainstacklabs.com',
-                    'https://rpc-mumbai.maticvigil.com',
-                    'https://matic-testnet-archive-rpc.bwarelabs.com'
+                  rpcUrls: [
+                    "https://rpc-mumbai.matic.today",
+                    "https://matic-mumbai.chainstacklabs.com",
+                    "https://rpc-mumbai.maticvigil.com",
+                    "https://matic-testnet-archive-rpc.bwarelabs.com",
                   ] /* ... */,
-                  blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
+                  blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
                 },
               ],
             });
@@ -87,18 +88,17 @@ export default function Mint() {
     if (info.file.status === "done") {
       message.success(`${info.file.name} file uploaded successfully`);
       captureFile(info.file.originFileObj);
-
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
-  }
+  };
 
   const captureFile = (file) => {
     //event.preventDefault()
     // console.log(event.target);
     // const file = event.target.files[0];
     const reader = new window.FileReader();
-    console.log("file", file)
+    console.log("file", file);
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
       setBuffer(Buffer(reader.result));
@@ -231,6 +231,8 @@ export default function Mint() {
     </div>
   );
 }
+
+export const account;
 /*arguments to pass to handleMintNFT: token name(string,mandatory),
 image_link(string,mandatory, can be changed with blockchain function),
 exp_time (integer, epoch timestamp, pass 0 in case user passes nothing), 
