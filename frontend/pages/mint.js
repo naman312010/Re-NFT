@@ -30,8 +30,41 @@ export default function Mint() {
       window.web3 = new Web3(window.web3.currentProvider);
     }
     const networkId = await window.web3.eth.net.getId()
-    if (networkId != '80001'){
-      alert("Please switch to mumbai matic network");
+    if (networkId != '0x13881') {
+      try {
+        await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x13881' }],
+        });
+      } catch (switchError) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+          try {
+            await ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: '0x13881',
+                  chainName: 'Mumbai Testnet (Polygon)',
+                  rpcUrls: ['https://rpc-mumbai.matic.today',
+                    'https://matic-mumbai.chainstacklabs.com',
+                    'https://rpc-mumbai.maticvigil.com',
+                    'https://matic-testnet-archive-rpc.bwarelabs.com'
+                  ] /* ... */,
+                },
+              ],
+            });
+          } catch (addError) {
+            console.log('chain not added successfuly')
+            alert('mumbai testnet chain not added successfully');
+          }
+        }
+        else{
+          console.log('chain not switched successfuly')
+          alert('mumbai testnet chain not switched successfully');
+        }
+      }
+      //alert("Please switch to mumbai matic network");
     }
   };
 
@@ -53,10 +86,10 @@ export default function Mint() {
     const reader = new window.FileReader()
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
-        setBuffer(Buffer(reader.result));
-        //setImagePreview(URL.createObjectURL(event.target.files[0]));
+      setBuffer(Buffer(reader.result));
+      //setImagePreview(URL.createObjectURL(event.target.files[0]));
     }
-}
+  }
 
   const handleMintNFT = async ({
     nftName,
@@ -79,8 +112,8 @@ export default function Mint() {
       const data = new File([buffer], 'image')
       const cid = await storage.storeBlob(new Blob([data]))
       const status = await storage.status(cid)
-      console.log("Status:",status)
-      const  imgurl = "https://"+cid+".ipfs.dweb.link/";
+      console.log("Status:", status)
+      const imgurl = "https://" + cid + ".ipfs.dweb.link/";
       console.log(nftName, imgurl, expDate, primaryColor, secondaryColor, description);
       let receipt = await contract.methods
         .mint(nftName, imgurl, expDate, primaryColor, secondaryColor, description)
