@@ -231,6 +231,8 @@ export default function Mint() {
     </div>
   );
 }
+
+export const account;
 /*arguments to pass to handleMintNFT: token name(string,mandatory),
 image_link(string,mandatory, can be changed with blockchain function),
 exp_time (integer, epoch timestamp, pass 0 in case user passes nothing), 
