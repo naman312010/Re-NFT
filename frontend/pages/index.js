@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react'
-import { Card, Avatar, Row, Col } from "antd"
+import React, { useState, useEffect } from "react";
+import { Card, Avatar, Row, Col, Spin, Alert } from "antd";
+import { useQuery, gql } from "@apollo/client";
 import {
   EditOutlined,
   EllipsisOutlined,
@@ -7,77 +8,55 @@ import {
   ShoppingOutlined,
   HeartOutlined,
 } from "@ant-design/icons";
+import { decode as atob, encode as btoa } from "base-64";
+import NFTCards from "../components/NFTCard";
+import Wrapper from "../components/Wrapper";
 
-const { Meta } = Card;
+const All_NFTS = gql`
+  query AllTokens {
+    tokens(orderBy: mintedTime, orderDirection: desc) {
+      id
+      creator
+      owner
+      uri
+    }
+  }
+`;
 
 export default function Home() {
-  const [NFTData, SetNFTData] = useState([])
-  function NFTCards() {
-    const totalCards = 28;
-    const styledCards = [];
-    console.log("NFTData", NFTData);
-    for (let idx = 0; idx < totalCards; idx += 1) {
-      const  {
-        id,
-        author,
-        width,
-        height,
-        url,
-        download_url
-    } = NFTData[idx] ?? {}
-      styledCards.push(
-        <Col sm={12} md={8} lg={6}>
-          <Card
-            style={{
-              width: "200px",
-              margin: "0 0 50px",
-            }}
-            cover={
-              <img
-                alt="example"
-                src={`https://picsum.photos/id/${id}/200/200`}
-              />
-            }
-            actions={[
-              <HeartOutlined key="Like" />,
-              <ShoppingOutlined key="Buy Now" />,
-              <EllipsisOutlined key="ellipsis" />,
-            ]}
-          >
-            <Meta
-              avatar={
-                <Avatar
-                  src={`https://avatars.dicebear.com/api/human/${id}.svg`}
-                />
-              }
-              title={author}
-              description="About NFT"
-              price="0.05 ETH"
-            />
-          </Card>
-        </Col>
-      );
-    }
-    return styledCards;
+  function b64_to_utf8(str) {
+    return decodeURIComponent(escape(window.atob(str)));
+  }
+  const { loading, error, data } = useQuery(All_NFTS);
+  console.log("all nft", data);
+  if (data) {
+    let uri = data.tokens[0].uri
+    // uri.replace("data:application/json;base64,", "");
+    uri = uri.slice(29, uri.length)
+    console.log("original data", JSON.parse(atob(uri)));
+    // console.log("utf 8", b64_to_utf8(uri));
   }
 
-  useEffect(async () => {
-    const response = await fetch("https://picsum.photos/v2/list");
-    const data = await response.json();
-    SetNFTData(data)
-  }, [])
-  
   return (
-    <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-      {/* <div>Browser Page</div> */}
-      <Row
+    <Wrapper loading={loading} error={error}>
+      <div
         style={{
-          width: "80%",
-          justifyContent: 'space-between'
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
-        {NFTCards()}
-      </Row>
-    </div>
+        {/* <div>Browser Page</div> */}
+        <Row
+          style={{
+            width: "80%",
+            justifyContent: "space-between",
+          }}
+        >
+          <NFTCards NFTData={data} />
+        </Row>
+      </div>
+    </Wrapper>
   );
 }
