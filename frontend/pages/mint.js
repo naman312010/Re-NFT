@@ -46,22 +46,23 @@ export default function Mint() {
                 {
                   chainId: '0x13881',
                   chainName: 'Mumbai Testnet (Polygon)',
+                  nativeCurrency: {
+                    name: 'Matic',
+                    symbol: 'MATIC',
+                    decimals: 18
+                  },
                   rpcUrls: ['https://rpc-mumbai.matic.today',
                     'https://matic-mumbai.chainstacklabs.com',
                     'https://rpc-mumbai.maticvigil.com',
                     'https://matic-testnet-archive-rpc.bwarelabs.com'
                   ] /* ... */,
+                  blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
                 },
               ],
             });
           } catch (addError) {
-            console.log('chain not added successfuly')
-            alert('mumbai testnet chain not added successfully');
+            console.log(addError);
           }
-        }
-        else{
-          console.log('chain not switched successfuly')
-          alert('mumbai testnet chain not switched successfully');
         }
       }
       //alert("Please switch to mumbai matic network");
