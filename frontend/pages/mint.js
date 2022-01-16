@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import renft from "../artifacts/ReNFT.json";
-import { Form, Input, Button, DatePicker } from "antd";
+import { Form, Input, Button, DatePicker, Upload, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { NFTStorage, File } from "nft.storage";
 import { pack } from "ipfs-car/pack";
 
@@ -80,11 +81,24 @@ export default function Mint() {
     console.log("Current connected account:" + currentaccount);
   }
 
-  const captureFile = (event) => {
+  const handleChange = (info) => {
+    if (info.file.status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === "done") {
+      message.success(`${info.file.name} file uploaded successfully`);
+      captureFile(info.file.originFileObj);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
+  const captureFile = (file) => {
     //event.preventDefault()
-    console.log(event.target);
-    const file = event.target.files[0];
+    // console.log(event.target);
+    // const file = event.target.files[0];
     const reader = new window.FileReader();
+    console.log("file", file);
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
       setBuffer(Buffer(reader.result));
@@ -123,6 +137,7 @@ export default function Mint() {
         secondaryColor,
         description
       );
+      message.loading(`Please be patient, your NFT is minting 😋`);
       let receipt = await contract.methods
         .mint(
           nftName,
@@ -135,6 +150,7 @@ export default function Mint() {
         .send({ from: currentaccount });
       if (receipt) {
         console.log(receipt);
+        message.success(`Yayy 🎊! ${nftName} NFT minted successfully`);
         loadBlockchaindata();
       }
     } catch (err) {
@@ -202,7 +218,9 @@ export default function Mint() {
           rules={[{ required: true, message: "Please upload the image!!" }]}
           hasFeedback
         >
-          <Input type="file" onChange={captureFile} required />
+          <Upload name="imgFile" onChange={handleChange} required>
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+          </Upload>
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
