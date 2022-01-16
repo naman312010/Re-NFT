@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
-var Contract = require("web3-eth-contract");
 import renft from "../artifacts/ReNFT.json";
 import { Form, Input, Button, DatePicker } from "antd";
+import { NFTStorage, File } from "nft.storage";
+import { pack } from "ipfs-car/pack";
+
+const endpoint = "https://api.nft.storage";
+const apiKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDA4NTE4NTA5ZDM2Y2IyMjg3OTZDOTQ0ZkNBOEY2ZGE2YTNhMUMyZTAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYzODQ0NzgwNzUyNSwibmFtZSI6IkNyeXB0b21pbnRyIn0.HxJ9oY_N_aZeOeEi6XYRNWSr_Tk1_QTouUuEvr688QM";
+const storage = new NFTStorage({ endpoint, token: apiKey });
 
 // type RequiredMark = boolean | 'optional';
 
@@ -11,7 +17,7 @@ export default function Mint() {
     loadWeb3();
     loadBlockchaindata();
   }, []);
-
+  const [buffer, setBuffer] = useState();
   const [form] = Form.useForm();
   const [currentaccount, setCurrentaccount] = useState("");
 
@@ -21,6 +27,45 @@ export default function Mint() {
       await window.ethereum.enable();
     } else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider);
+    }
+    const networkId = await window.web3.eth.net.getId();
+    if (networkId != "0x13881") {
+      try {
+        await ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x13881" }],
+        });
+      } catch (switchError) {
+        // This error code indicates that the chain has not been added to MetaMask.
+        if (switchError.code === 4902) {
+          try {
+            await ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0x13881",
+                  chainName: "Mumbai Testnet (Polygon)",
+                  nativeCurrency: {
+                    name: "Matic",
+                    symbol: "MATIC",
+                    decimals: 18,
+                  },
+                  rpcUrls: [
+                    "https://rpc-mumbai.matic.today",
+                    "https://matic-mumbai.chainstacklabs.com",
+                    "https://rpc-mumbai.maticvigil.com",
+                    "https://matic-testnet-archive-rpc.bwarelabs.com",
+                  ] /* ... */,
+                  blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+                },
+              ],
+            });
+          } catch (addError) {
+            console.log(addError);
+          }
+        }
+      }
+      //alert("Please switch to mumbai matic network");
     }
   };
 
@@ -35,9 +80,21 @@ export default function Mint() {
     console.log("Current connected account:" + currentaccount);
   }
 
+  const captureFile = (event) => {
+    //event.preventDefault()
+    console.log(event.target);
+    const file = event.target.files[0];
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onloadend = () => {
+      setBuffer(Buffer(reader.result));
+      //setImagePreview(URL.createObjectURL(event.target.files[0]));
+    };
+  };
+
   const handleMintNFT = async ({
     nftName,
-    img,
+    imgFile,
     expDate,
     primaryColor,
     secondaryColor,
@@ -53,9 +110,28 @@ export default function Mint() {
         renft.abi,
         renft.networks[networkId].address
       );
-      //console.log(renft.networks[networkId].address);
+      const data = new File([buffer], "image");
+      const cid = await storage.storeBlob(new Blob([data]));
+      const status = await storage.status(cid);
+      console.log("Status:", status);
+      const imgurl = "https://" + cid + ".ipfs.dweb.link/";
+      console.log(
+        nftName,
+        imgurl,
+        expDate,
+        primaryColor,
+        secondaryColor,
+        description
+      );
       let receipt = await contract.methods
-        .mint(nftName, img, expDate, primaryColor, secondaryColor, description)
+        .mint(
+          nftName,
+          imgurl,
+          expDate,
+          primaryColor,
+          secondaryColor,
+          description
+        )
         .send({ from: currentaccount });
       if (receipt) {
         console.log(receipt);
@@ -76,8 +152,8 @@ export default function Mint() {
       }
     }
     console.log(values);
+    handleMintNFT(values);
     form.resetFields();
-    // handleMintNFT(values);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -126,12 +202,7 @@ export default function Mint() {
           rules={[{ required: true, message: "Please upload the image!!" }]}
           hasFeedback
         >
-          <Input
-            type="file"
-            id="avatar"
-            name="avatar"
-            accept="image/png, image/jpeg"
-          />
+          <Input type="file" onChange={captureFile} required />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
