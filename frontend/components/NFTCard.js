@@ -7,7 +7,7 @@ import {
   ShoppingOutlined,
   HeartOutlined,
 } from "@ant-design/icons";
-
+import shimmer from './shimmer'
 const { Meta } = Card;
 
 export default function NFTCard(props) {
@@ -16,13 +16,14 @@ export default function NFTCard(props) {
   const styledCards = [];
   console.log("NFTData", NFTData);
   for (let idx = 0; idx < totalCards; idx += 1) {
-    let uri = NFTData?.tokens[idx]?.uri ?? {}
-    uri = uri.slice(29, uri.length)
-    const data = JSON.parse(atob(uri))
-    const { image, name, description, attributes } = data
-    console.log({ image, name, description, attributes });
+    let uri = NFTData?.tokens[idx]?.uri ?? {};
+    const { creator } = NFTData?.tokens[idx];
+    uri = uri.slice(29, uri.length);
+    const data = JSON.parse(atob(uri));
+    const { image, name, description, attributes } = data;
+    console.log({ image, name, description, attributes, creator });
     if (!image && !name) {
-      continue
+      continue;
     }
     styledCards.push(
       <Col sm={12} md={8} lg={6}>
@@ -31,7 +32,12 @@ export default function NFTCard(props) {
             width: "200px",
             margin: "0 0 50px",
           }}
-          cover={<img alt="example" src={image} />}
+          hoverable
+          cover={
+            <div style={{ overflow: "hidden", height: "200px" }}>
+              <img alt="example" src={image} />
+            </div>
+          }
           actions={[
             <HeartOutlined key="Like" />,
             <ShoppingOutlined key="Buy Now" />,
@@ -46,8 +52,24 @@ export default function NFTCard(props) {
             }
             title={name}
             description={description}
-            price="0.05 ETH"
+            style={{height: '100px', overflowY: 'hidden'}}
           />
+          <div
+            className="additional"
+            style={{
+              width: "100%",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              display: "flex",
+              marginTop: "2rem",
+              color: "rgba(0, 0, 0, 0.45)",
+              overflow: "hidden",
+              flexWrap: "wrap",
+            }}
+          >
+            {/* <p style={{ fontWeight: "bold" }}>Price: 20$</p> */}
+            <p style={{ fontWeight: "bold" }}>Author: {creator}</p>
+          </div>
         </Card>
       </Col>
     );

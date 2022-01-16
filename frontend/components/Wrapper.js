@@ -7,8 +7,8 @@ export default function Wrapper(props) {
       <Spin
         size="large"
         style={{
-          width: "100vh",
-          height: "100vh",
+          width: "100%",
+          height: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
