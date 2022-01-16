@@ -44,21 +44,24 @@ export default function Mint() {
               method: "wallet_addEthereumChain",
               params: [
                 {
-                  chainId: "0x13881",
-                  chainName: "Mumbai Testnet (Polygon)",
-                  rpcUrls: [
-                    "https://rpc-mumbai.matic.today",
-                    "https://matic-mumbai.chainstacklabs.com",
-                    "https://rpc-mumbai.maticvigil.com",
-                    "https://matic-testnet-archive-rpc.bwarelabs.com",
+                  chainId: '0x13881',
+                  chainName: 'Mumbai Testnet (Polygon)',
+                  nativeCurrency: {
+                    name: 'Matic',
+                    symbol: 'MATIC',
+                    decimals: 18
+                  },
+                  rpcUrls: ['https://rpc-mumbai.matic.today',
+                    'https://matic-mumbai.chainstacklabs.com',
+                    'https://rpc-mumbai.maticvigil.com',
+                    'https://matic-testnet-archive-rpc.bwarelabs.com'
                   ] /* ... */,
+                  blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
                 },
               ],
             });
           } catch (addError) {
-            console.log("chain not added successfuly");
-            console.log("switchError", addError)
-            alert("mumbai testnet chain not added successfully");
+            console.log(addError);
           }
         }
       }
